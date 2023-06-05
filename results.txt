@@ -1,1 +1,45 @@
+2.
+#to pick users without orders
+
+SELECT users.name FROM users
+LEFT JOIN orders on orders.user_id = users.id
+WHERE orders.user_id is NULL
+ORDER BY orders.user_id DESC
+
+#count how much we have (2 SQLs)
+
+SELECT COUNT(users.name) FROM users
+LEFT JOIN orders on orders.user_id = users.id
+WHERE orders.user_id is NULL
+
+
+#to pick products without ratings
+SELECT * from products
+WHERE products.rating = 0
+
+
+#restore the formula for total based on discount, quantity, subtotal, tax (table orders)
+UPDATE orders
+SET total = (subtotal - discount) * quantity * (tax/100)
+
+
+3.
+
+3.1
+#create a view to see the average product rating (based on products and reviews tables, keep products without reviews unrated)
+CREATE VIEW avgView AS
+SELECT reviews.product_id, AVG(reviews.rating+products.rating) FROM reviews
+LEFT JOIN products on products.id = reviews.product_id
+GROUP BY products.id, reviews.product_id,reviews.rating
+
+
+3.2
+#create a materialized view based on previous view, add a rating from the table products - we should see 2 ratings in the output
+CREATE MATERIALIZED VIEW reviesAndproducts AS
+SELECT reviews.rating as reviews_ratings ,products.rating as products_ratings FROM reviews
+LEFT JOIN products on products.id = reviews.product_id
+GROUP BY products.id, reviews.product_id,reviews.rating;
+
+
+
 
