@@ -25,7 +25,7 @@ SET total = (subtotal - discount) * quantity * (tax/100)
 
 3.
 
-3.1
+
 #create a view to see the average product rating (based on products and reviews tables, keep products without reviews unrated)
 CREATE VIEW avgView AS
 SELECT reviews.product_id, AVG(reviews.rating+products.rating) FROM reviews
@@ -33,13 +33,31 @@ LEFT JOIN products on products.id = reviews.product_id
 GROUP BY products.id, reviews.product_id,reviews.rating
 
 
-3.2
+4
 #create a materialized view based on previous view, add a rating from the table products - we should see 2 ratings in the output
 CREATE MATERIALIZED VIEW reviesAndproducts AS
 SELECT reviews.rating as reviews_ratings ,products.rating as products_ratings FROM reviews
 LEFT JOIN products on products.id = reviews.product_id
 GROUP BY products.id, reviews.product_id,reviews.rating;
 
+
+5.1 For the first task I could use:
+
+SELECT users.name FROM users
+WHERE users.id not in (SELECT orders.user_id FROM orders)
+
+if code seems more complicated with using JOINS we can just use subquery to make code look nicer but according to the performace it is good 
+to use JOINS in order to get more effiency as we have avarage size of data.
+
+5.2.
+In order to pick products without ratings I would set ratings to Null or empty, in provided table there is only 0 rating which is actual
+rating itself, whcih means we can write query that are less than 1 or equal to the 0.
+
+5.3
+I didnt get the third question
+
+5.4
+For restoring formula to get totals regarding columns like subtotal, discounts and taxes I would create another view with aim of calculating the totals only in this case it would be more faster than normal method.
 
 
 
